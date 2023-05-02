@@ -8,12 +8,12 @@ const SMALL_SPACING = 9;
 const BLACK = '#000000';
 
 export const VideoCall = (): JSX.Element => {
-	const {joinChannel, joined, leaveChannel, users} = useAgora();
+	const {joinChannel, joined, leaveChannel, users, ready} = useAgora();
 
 	if (!joined) {
 		return (
 			<div style={styles.contentContainer}>
-				<input type="button" onClick={joinChannel} value="Join channel" />
+				<input type="button" onClick={joinChannel} value="Join channel" disabled={!ready} />
 			</div>
 		);
 	}

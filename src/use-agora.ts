@@ -112,7 +112,6 @@ export const useAgora: UseAgoraType = () => {
 	);
 
 	React.useEffect(() => {
-		initEngine().catch(console.error);
 		return () => {
 			leaveChannel();
 			removeListeners();

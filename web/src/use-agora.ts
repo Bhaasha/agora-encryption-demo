@@ -37,6 +37,7 @@ export const useAgora = () => {
 	const client = React.useRef<IAgoraRTCClient>();
 	const [uid, setUid] = useState(0);
 	const [usersInfo, setUsersInfo] = useState<any[]>([]);
+	const [ready, setReady] = useState(false);
 
 	const setUsers = React.useCallback(
 		(users: IAgoraRTCRemoteUser[]) => {
@@ -119,7 +120,7 @@ export const useAgora = () => {
 		() => {
 			if (!client.current) {
 				client.current = AgoraRTC.createClient({codec: "h264", mode: "rtc"});
-				initTracks().catch(console.error);
+				initTracks().then(() => setReady(true)).catch(console.error);
 			}
 
 			const handleUserPublished = (user: IAgoraRTCRemoteUser, mediaType: "audio" | "video"): void => {
@@ -154,6 +155,7 @@ export const useAgora = () => {
 		joinChannel,
 		joined: uid !== 0,
 		leaveChannel,
+		ready,
 		users: usersInfo,
 	};
 };
