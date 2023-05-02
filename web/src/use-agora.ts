@@ -8,8 +8,7 @@ import AgoraRTC, {
 import * as React from "react";
 import {useState} from "react";
 import {hexToAscii} from "./utils";
-import {AgoraUser, UNSET_UID, UseAgoraType} from "../../src/rtc-view/use-agora.common";
-import { APP_ID, CHANNEL_ID, KEY, TOKEN } from "../../shared/config";
+import {APP_ID, CHANNEL_ID, KEY, TOKEN} from "../../shared/config";
 
 // Custom error used when a device is missing
 export class MissingDeviceError extends Error {
@@ -34,10 +33,10 @@ export const userTracks = {
 	users: [] as IAgoraRTCRemoteUser[],
 };
 
-export const useAgora: UseAgoraType = () => {
+export const useAgora = () => {
 	const client = React.useRef<IAgoraRTCClient>();
-	const [uid, setUid] = useState(UNSET_UID);
-	const [usersInfo, setUsersInfo] = useState<AgoraUser[]>([]);
+	const [uid, setUid] = useState(0);
+	const [usersInfo, setUsersInfo] = useState<any[]>([]);
 
 	const setUsers = React.useCallback(
 		(users: IAgoraRTCRemoteUser[]) => {
@@ -78,12 +77,11 @@ export const useAgora: UseAgoraType = () => {
 		() => {
 			client.current?.leave().then(() => {
 				userTracks.users = [];
-				setUid(UNSET_UID);
+				setUid(0);
 			}).catch(console.error);
 		},
 		[client],
 	);
-
 
 	const initTracks = React.useCallback(
 		() => AgoraRTC.getDevices()
@@ -154,7 +152,7 @@ export const useAgora: UseAgoraType = () => {
 
 	return {
 		joinChannel,
-		joined: uid !== UNSET_UID,
+		joined: uid !== 0,
 		leaveChannel,
 		users: usersInfo,
 	};

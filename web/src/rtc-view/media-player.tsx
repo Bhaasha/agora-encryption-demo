@@ -1,8 +1,7 @@
 import {ILocalAudioTrack, ILocalVideoTrack, IRemoteAudioTrack, IRemoteVideoTrack} from "agora-rtc-sdk-ng";
 import * as React from "react";
-import {StyleSheet, View, ViewProps} from "react-native";
 
-interface VideoPlayerProps extends ViewProps {
+interface VideoPlayerProps {
 	audioTrack?: ILocalAudioTrack | IRemoteAudioTrack | null;
 	videoTrack?: ILocalVideoTrack | IRemoteVideoTrack | null;
 }
@@ -24,8 +23,8 @@ export const MediaPlayer = ({videoTrack, audioTrack, ...props}: VideoPlayerProps
 	}, [audioTrack]);
 
 	return (
-		<View {...props}>
-			<div ref={container} style={StyleSheet.absoluteFillObject} />
-		</View>
+		<div {...props} style={{flex: 1}}>
+			<div ref={container} style={{flex: 1, position: 'absolute', left: 0, right: 0, top: 0, bottom: 0}} />
+		</div>
 	);
 };
