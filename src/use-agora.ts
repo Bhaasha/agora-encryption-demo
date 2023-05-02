@@ -34,13 +34,19 @@ export const useAgora: UseAgoraType = () => {
 	const [users, setUsers] = React.useState<AgoraUser[]>([]);
 
 	const joinChannel = React.useCallback(() => {
-		const asciiKey = hexToAscii(KEY);
-		console.log({KEY, asciiKey});
-
 		const encryptionKdfSalt = new Array(32).fill(1, 0, 32);
+		const asciiKey = hexToAscii(KEY);
 
 		const encryptionRes = engine.current?.enableEncryption(true, {
-			encryptionKey: KEY,
+			/*
+			 * Here you can try to use either KEY or asciiKey.
+			 * To connect with web users, you need to use asciiKey, as the web uses the ascii version.
+			 * - If you use KEY directly, then both android and iOS users can join the channel together, but not connect with
+			 *   web users.
+			 * - If you use asciiKey, then you will be able to join the channel with android and talk with web users. But not
+			 *   iOS (this part also worked in version 3 of react-native-agora, but not anymore in version 4).
+			 */
+			encryptionKey: asciiKey,
 			encryptionMode: EncryptionMode.Aes128Gcm,
 			encryptionKdfSalt,
 		});
