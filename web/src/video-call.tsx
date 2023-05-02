@@ -10,8 +10,6 @@ const BLACK = '#000000';
 export const VideoCall = (): JSX.Element => {
 	const {joinChannel, joined, leaveChannel, users} = useAgora();
 
-	console.log("joined", joined);
-
 	if (!joined) {
 		return (
 			<div style={styles.contentContainer}>
@@ -21,21 +19,17 @@ export const VideoCall = (): JSX.Element => {
 	}
 	return (
 		<div style={styles.container}>
-			<div>
-				{users.length > 0 &&
-					users.map(({id}, index) => (
-						<div key={index}>
-							<RtcRemoteView
-								style={styles.rtcView}
-								uid={id}
-								zOrderMediaOverlay
-							/>
-						</div>
-					))}
-				<div style={styles.userView}>
-					<RtcLocalView style={styles.rtcView} />
-				</div>
-				</div>
+			{users.length > 0 && users.map(({id}, index) => (
+				<RtcRemoteView
+					key={index}
+					style={styles.rtcView}
+					uid={id}
+					zOrderMediaOverlay
+				/>
+			))}
+			<div style={styles.userView}>
+				<RtcLocalView style={styles.rtcView} />
+			</div>
 			<input type="button" onClick={leaveChannel} value="Leave channel" style={{position: "absolute"}}/>
 		</div>
 	);

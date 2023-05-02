@@ -23,8 +23,6 @@ export const MediaPlayer = ({videoTrack, audioTrack, ...props}: VideoPlayerProps
 	}, [audioTrack]);
 
 	return (
-		<div {...props} style={{flex: 1}}>
-			<div ref={container} style={{flex: 1, position: 'absolute', left: 0, right: 0, top: 0, bottom: 0}} />
-		</div>
+		<div ref={container} {...props} style={{width: 300, height: 200}} />
 	);
 };
