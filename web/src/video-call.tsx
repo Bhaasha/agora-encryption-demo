@@ -36,7 +36,7 @@ export const VideoCall = (): JSX.Element => {
 					<RtcLocalView style={styles.rtcView} />
 				</div>
 				</div>
-			<input type="button" onClick={leaveChannel} value="Leave channel"/>
+			<input type="button" onClick={leaveChannel} value="Leave channel" style={{position: "absolute"}}/>
 		</div>
 	);
 };
