@@ -11,6 +11,5 @@ export type UseAgoraType = () => {
 	joinChannel: () => void;
 	joined: boolean;
 	leaveChannel: () => void;
-	uid: number;
 	users: AgoraUser[];
 };
