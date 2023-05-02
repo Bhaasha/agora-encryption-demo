@@ -14,9 +14,9 @@ import {
 	IRtcEngine,
 	LogLevel,
 } from 'react-native-agora';
-import {hexToAscii} from '../web/src/utils';
+import {hexToAscii} from './utils';
 import {AgoraUser, UNSET_UID, UseAgoraType} from './rtc-view/use-agora.common';
-import {APP_ID, CHANNEL_ID, KEY, TOKEN} from '../shared/config';
+import {APP_ID, CHANNEL_ID, KEY, TOKEN} from '../config';
 
 const requestCameraAndAudioPermission = (): Promise<
 	{[key in Permission]: PermissionStatus} | void

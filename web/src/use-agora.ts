@@ -8,7 +8,7 @@ import AgoraRTC, {
 import * as React from "react";
 import {useState} from "react";
 import {hexToAscii} from "./utils";
-import {APP_ID, CHANNEL_ID, KEY, TOKEN} from "../../shared/config";
+import {APP_ID, CHANNEL_ID, KEY, TOKEN} from "../../config";
 
 // Custom error used when a device is missing
 export class MissingDeviceError extends Error {
@@ -54,7 +54,14 @@ export const useAgora = () => {
 				return console.error("Client could not be initialized");
 			}
 
-			// https://docs.agora.io/en/Video/channel_encryption_web_ng?platform=Web
+			/*
+			 * Here you can try:
+			 * - Using "test" as key: you will be able to join the channel, and connect with mobile user if they also use "test".
+			 *   However, "test" is not a key in hex format.
+			 * - Using KEY as key: it will produce an error, given KEY is in hex format.
+			 * - Using hexToAscii(KEY): you will be able to join the channel with mobile user if they can use hexToAscii too.
+			 *   Android users can, but iOS users can't.
+			 */
 			client.current.setEncryptionConfig("aes-128-gcm", hexToAscii(KEY));
 
 			client.current.join(APP_ID, CHANNEL_ID, TOKEN)
