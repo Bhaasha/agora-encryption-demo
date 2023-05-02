@@ -16,12 +16,7 @@ import {
 	LogLevel,
 } from 'react-native-agora';
 import {hexToAscii} from './utils';
-import {
-	AgoraUser,
-	InitState,
-	UNSET_UID,
-	UseAgoraType,
-} from './use-agora.common';
+import {AgoraUser, UNSET_UID, UseAgoraType} from './use-agora.common';
 
 const requestCameraAndAudioPermission = (): Promise<
 	{[key in Permission]: PermissionStatus} | void
@@ -41,11 +36,33 @@ const KEY = '3fec184026b596204eb478afab3f5242fb0a07b4e0cc32a717f01e0fd8694d62';
 
 export const useAgora: UseAgoraType = () => {
 	const engine = React.useRef<IRtcEngine>();
-	const [initState, setInitState] = React.useState<InitState>({
-		status: 'initializing',
-	});
 	const [currentUid, setCurrentUid] = React.useState(UNSET_UID);
 	const [users, setUsers] = React.useState<AgoraUser[]>([]);
+
+	const joinChannel = React.useCallback(() => {
+		const asciiKey = hexToAscii(KEY);
+		console.log({KEY, asciiKey});
+
+		const encryptionKdfSalt = new Array(32).fill(1, 0, 32);
+
+		const encryptionRes = engine.current?.enableEncryption(true, {
+			encryptionKey: asciiKey,
+			encryptionMode: EncryptionMode.Aes128Gcm,
+			encryptionKdfSalt,
+		});
+		console.log(encryptionRes);
+
+		const joinResult = engine.current?.joinChannel(TOKEN, CHANNEL_ID, 0, {});
+		// onError will not be called for this specific case, so we need to handle it here
+		if (joinResult === undefined || joinResult < 0) {
+			console.error('Error: could not join channel', joinResult);
+		}
+	}, []);
+
+	const leaveChannel = React.useCallback(
+		() => engine.current?.leaveChannel(),
+		[],
+	);
 
 	const addListeners = React.useCallback(() => {
 		engine.current?.addListener('onError', errorCode => {
@@ -100,32 +117,8 @@ export const useAgora: UseAgoraType = () => {
 		[addListeners],
 	);
 
-	const joinChannel = React.useCallback(() => {
-		const asciiKey = hexToAscii(KEY);
-		const encryptionKdfSalt = new Array(32).fill(1, 0, 32);
-		console.log({KEY, asciiKey});
-		const res = engine.current?.enableEncryption(true, {
-			encryptionKey: asciiKey,
-			encryptionMode: EncryptionMode.Aes128Gcm,
-			encryptionKdfSalt,
-		});
-		console.log(res);
-
-		const joinResult = engine.current?.joinChannel(TOKEN, CHANNEL_ID, 0, {});
-		// onError will not be called for this specific case, so we need to handle it here
-		if (joinResult === undefined || joinResult < 0) {
-			console.error('Error: could not join channel', joinResult);
-		}
-	}, []);
-
-	const leaveChannel = React.useCallback(
-		() => engine.current?.leaveChannel(),
-		[],
-	);
 	React.useEffect(() => {
-		initEngine()
-			.then(() => setInitState({status: 'ready'}))
-			.catch(console.error);
+		initEngine().catch(console.error);
 		return () => {
 			leaveChannel();
 			removeListeners();
@@ -133,7 +126,6 @@ export const useAgora: UseAgoraType = () => {
 	}, [initEngine, joinChannel, leaveChannel, removeListeners]);
 
 	return {
-		initState,
 		joinChannel,
 		joined: currentUid !== UNSET_UID,
 		leaveChannel,

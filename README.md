@@ -7,4 +7,4 @@ To start the react-native part:
 2) npm start
 3) cd ios && pod install
 4) npm run ios / npm run android. You can also run on iOS by opening the .xcworkspace
-with XCode.
+with XCode and selecting your physical device.

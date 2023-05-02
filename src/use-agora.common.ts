@@ -7,10 +7,7 @@ export interface AgoraUser {
 	id: number;
 }
 
-export type InitState = {status: 'initializing'} | {status: 'ready'};
-
 export type UseAgoraType = () => {
-	initState: InitState;
 	joinChannel: () => void;
 	joined: boolean;
 	leaveChannel: () => void;
