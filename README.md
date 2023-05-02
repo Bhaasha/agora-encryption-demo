@@ -12,4 +12,6 @@ To start the react-native part:
 4) `npm run ios` / `npm run android`. You can also run on iOS by opening the .xcworkspace
 with XCode and selecting your physical device.
 
-To start the web part: `npm run start:web`
+To start the web part:
+1) `cd web && npm i`
+2) `npm run start:web`
