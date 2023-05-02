@@ -1,5 +1,4 @@
 import * as React from 'react';
-// eslint-disable-next-line react-native/split-platform-components
 import {
 	Permission,
 	PermissionsAndroid,
@@ -46,7 +45,7 @@ export const useAgora: UseAgoraType = () => {
 		const encryptionKdfSalt = new Array(32).fill(1, 0, 32);
 
 		const encryptionRes = engine.current?.enableEncryption(true, {
-			encryptionKey: asciiKey,
+			encryptionKey: KEY,
 			encryptionMode: EncryptionMode.Aes128Gcm,
 			encryptionKdfSalt,
 		});
