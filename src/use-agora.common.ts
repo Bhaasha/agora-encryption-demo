@@ -12,7 +12,6 @@ export type InitState = {status: 'initializing'} | {status: 'ready'};
 export type UseAgoraType = (
 	channelId: string,
 	token: string,
-	sessionId: string,
 	secret?: string,
 ) => {
 	initState: InitState;
