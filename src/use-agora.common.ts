@@ -9,11 +9,7 @@ export interface AgoraUser {
 
 export type InitState = {status: 'initializing'} | {status: 'ready'};
 
-export type UseAgoraType = (
-	channelId: string,
-	token: string,
-	secret?: string,
-) => {
+export type UseAgoraType = () => {
 	initState: InitState;
 	joinChannel: () => void;
 	joined: boolean;

@@ -57,16 +57,8 @@ const calculateLayout = (
 	return bestLayout;
 };
 
-export const VideoCall = ({
-	channelId,
-	token,
-	secret,
-}: {
-	channelId: string;
-	token: string;
-	secret?: string;
-}): JSX.Element => {
-	const {joinChannel, joined, users} = useAgora(channelId, token, secret);
+export const VideoCall = (): JSX.Element => {
+	const {joinChannel, joined, leaveChannel, users} = useAgora();
 
 	const [layout, setLayout] = React.useState<{height: number; width: number}>();
 
@@ -76,7 +68,11 @@ export const VideoCall = ({
 	}, []);
 
 	if (!joined) {
-		return <Button title="Join channel" onPress={joinChannel} />;
+		return (
+			<View style={styles.contentContainer}>
+				<Button title="Join channel" onPress={joinChannel} />
+			</View>
+		);
 	}
 
 	const userCount = users.length + 1; // +1 for self
@@ -112,6 +108,7 @@ export const VideoCall = ({
 							<RtcLocalView style={styles.rtcView} />
 						</View>
 					</View>
+					<Button title="Leave channel" onPress={leaveChannel} />
 				</ScrollView>
 			</View>
 		</>

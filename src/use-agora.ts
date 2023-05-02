@@ -14,10 +14,7 @@ import {
 	EncryptionMode,
 	IRtcEngine,
 	LogLevel,
-	RemoteAudioState,
-	RemoteVideoState,
 } from 'react-native-agora';
-import {AGORA_APP_ID} from './config';
 import {hexToAscii} from './utils';
 import {
 	AgoraUser,
@@ -36,11 +33,13 @@ const requestCameraAndAudioPermission = (): Promise<
 		  ])
 		: Promise.resolve();
 
-export const useAgora: UseAgoraType = (
-	channelId: string,
-	token: string,
-	secret?: string,
-) => {
+const APP_ID = '';
+const CHANNEL_ID = 'test';
+const TOKEN =
+	'007eJxTYJCT7JyqFai6593FCytTDitr31DQmG8hlJEiJjX1n26JVrUCQ2KyuZGFgYGxkZlBsomZhalFSmKSRUqahamxSVqqobHJhH0BKQ2BjAwqM5xZGRkgEMRnYShJLS5hYAAAcV0cUQ==';
+const KEY = '3fec184026b596204eb478afab3f5242fb0a07b4e0cc32a717f01e0fd8694d62';
+
+export const useAgora: UseAgoraType = () => {
 	const engine = React.useRef<IRtcEngine>();
 	const [initState, setInitState] = React.useState<InitState>({
 		status: 'initializing',
@@ -57,44 +56,6 @@ export const useAgora: UseAgoraType = (
 		);
 		engine.current?.addListener('onUserJoined', (_, uid) =>
 			setUsers(prev => [...prev, {hasAudio: true, hasVideo: true, id: uid}]),
-		);
-		engine.current?.addListener(
-			'onRemoteAudioStateChanged',
-			(_, uid, reason) => {
-				if (reason === RemoteAudioState.RemoteAudioStateStopped) {
-					setUsers(prev =>
-						prev.map(user =>
-							user.id === uid ? {...user, hasAudio: false} : user,
-						),
-					);
-				}
-				if (reason === RemoteAudioState.RemoteAudioStateDecoding) {
-					setUsers(prev =>
-						prev.map(user =>
-							user.id === uid ? {...user, hasAudio: true} : user,
-						),
-					);
-				}
-			},
-		);
-		engine.current?.addListener(
-			'onRemoteVideoStateChanged',
-			(_, uid, reason) => {
-				if (reason === RemoteVideoState.RemoteVideoStateStopped) {
-					setUsers(prev =>
-						prev.map(user =>
-							user.id === uid ? {...user, hasVideo: false} : user,
-						),
-					);
-				}
-				if (reason === RemoteVideoState.RemoteVideoStateDecoding) {
-					setUsers(prev =>
-						prev.map(user =>
-							user.id === uid ? {...user, hasVideo: true} : user,
-						),
-					);
-				}
-			},
 		);
 		engine.current?.addListener('onUserOffline', (_, uid) =>
 			setUsers(prev => prev.filter(({id}) => id !== uid)),
@@ -120,7 +81,7 @@ export const useAgora: UseAgoraType = (
 				.then(newEngine => {
 					engine.current = newEngine;
 					newEngine.initialize({
-						appId: AGORA_APP_ID,
+						appId: APP_ID,
 						areaCode: AreaCode.AreaCodeEu,
 						logConfig: {level: LogLevel.LogLevelInfo},
 					});
@@ -140,30 +101,22 @@ export const useAgora: UseAgoraType = (
 	);
 
 	const joinChannel = React.useCallback(() => {
-		if (secret) {
-			const encryptionKey =
-				'3fec184026b596204eb478afab3f5242fb0a07b4e0cc32a717f01e0fd8694d62';
-			const asciiKey = hexToAscii(encryptionKey);
-			const encryptionKdfSalt = new Array(32).fill(1, 0, 32);
-			console.log({encryptionKey, asciiKey});
-			const res = engine.current?.enableEncryption(true, {
-				encryptionKey: asciiKey,
-				encryptionMode: EncryptionMode.Aes128Gcm,
-				encryptionKdfSalt,
-			});
-			console.log(res);
-		}
-		const res = engine.current?.joinChannel(token, channelId, 0, {});
+		const asciiKey = hexToAscii(KEY);
+		const encryptionKdfSalt = new Array(32).fill(1, 0, 32);
+		console.log({KEY, asciiKey});
+		const res = engine.current?.enableEncryption(true, {
+			encryptionKey: asciiKey,
+			encryptionMode: EncryptionMode.Aes128Gcm,
+			encryptionKdfSalt,
+		});
+		console.log(res);
+
+		const joinResult = engine.current?.joinChannel(TOKEN, CHANNEL_ID, 0, {});
 		// onError will not be called for this specific case, so we need to handle it here
-		if (res === undefined || res < 0) {
-			console.error('Error: could not join channel', {
-				channelId,
-				code: res,
-				secret,
-				token,
-			});
+		if (joinResult === undefined || joinResult < 0) {
+			console.error('Error: could not join channel', joinResult);
 		}
-	}, [channelId, secret, token]);
+	}, []);
 
 	const leaveChannel = React.useCallback(
 		() => engine.current?.leaveChannel(),

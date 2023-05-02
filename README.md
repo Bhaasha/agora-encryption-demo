@@ -5,5 +5,6 @@ with the new version of react-native-agora.
 To start the react-native part:
 1) npm i
 2) npm start
-3) npm run ios / npm run android. You can also run on iOS by opening the .xcworkspace
+3) cd ios && pod install
+4) npm run ios / npm run android. You can also run on iOS by opening the .xcworkspace
 with XCode.
